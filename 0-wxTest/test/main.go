@@ -1,33 +1,26 @@
 package main
 
-import "fmt"
-
-type Hero struct {
-	name  string
-	level int
-	age   int
-}
-
-func (this *Hero) SetName(newName string) {
-	this.name = newName
-}
-
-func (this *Hero) GetName() string {
-	return this.name
-}
-
-func (this *Hero) Show() {
-	fmt.Println("name=", this.name)
-	fmt.Println("level=", this.level)
-	fmt.Println("age=", this.age)
-}
+import (
+	"fmt"
+	"time"
+)
 
 func main() {
-	hero := Hero{age: 100, level: 1000}
-	hero.Show()
-	hero.SetName("cwx")
-	fmt.Println(hero.GetName())
-	hero.Show()
+	c := make(chan int, 3)
+
+	go func() {
+		for i := 0; i < 4; i++ {
+			c <- i
+			fmt.Println("go协程执行中，i=", i, "len(c)=", len(c), "cap(c)=", cap(c))
+		}
+		fmt.Println("go协程结束")
+	}()
+	time.Sleep(2 * time.Second)
+	for i := 0; i < 4; i++ {
+		number := <-c
+		fmt.Println("main进程从channel中取出数据：", number)
+	}
+	fmt.Println("main进程结束")
 }
 
 func example() {
@@ -50,6 +43,12 @@ func example() {
 	//fmt.Printf("detail: %v", book)
 	//changeBook2(&book)
 	//fmt.Printf("detail: %v", book)
+
+	//hero := test.Hero{Age: 100, Level: 1000}
+	//hero.Show()
+	//hero.SetName("cwx")
+	//fmt.Println(hero.GetName())
+	//hero.Show()
 }
 
 type Book struct {
